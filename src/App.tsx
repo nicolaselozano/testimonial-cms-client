@@ -7,7 +7,6 @@ import AdminPanel from "./pages/AdminPanel";
 export default function App() {
   return (
     <BrowserRouter>
-      <NavBar />
 
       <Routes>
         <Route path="/" element={<Home />} />
