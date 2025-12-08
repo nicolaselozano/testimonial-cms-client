@@ -1,19 +1,4 @@
 @import "tailwindcss";
+@import "flowbite";
 
-/* Opcional: Tus estilos globales para reiniciar el tema */
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  
-  color-scheme: light;
-  background-color: #f3f4f6;
-  color: #1f2937;
-}
-
-body {
-  margin: 0;
-  display: block;
-  min-width: 320px;
-  min-height: 100vh;
-}
+@source "./**/*.{html,js,ts,jsx,tsx}";
