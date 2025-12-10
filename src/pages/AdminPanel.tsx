@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import AdminGuard from "../components/admin/AdminGuard";
-import PendingModeration from "../components/admin/PendingModeration";
+import TestimonialsTable from "../components/admin/TestimonialsTable";
 import CategoryManager from "../components/admin/CategoryManager";
 import TagManager from "../components/admin/TagManager";
 import AdminSidebar from "../components/layout/AdminSidebar";
@@ -80,7 +80,7 @@ export default function AdminPanel() {
                 </div>
              )}
 
-             {view === "moderation" && <PendingModeration />}
+             {view === "moderation" && <TestimonialsTable initialStatus="PENDING" />}
 
              {view === "categories" && (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
@@ -90,7 +90,7 @@ export default function AdminPanel() {
              )}
              
              {view === "testimonials" && (
-                 <PendingModeration/>
+                <TestimonialsTable initialStatus="APPROVED" />
              )}
 
              {(view === "users" || view === "config") && (
