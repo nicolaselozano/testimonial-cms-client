@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../config/axiosConfig";
 import { Eye, Check, X, Filter, Search } from "lucide-react";
 
-// Tipos basados en respuesta del backend
+// Tipos basados en tu respuesta del backend
 interface CategoryOrTag {
   id: string;
   name: string;
@@ -133,7 +133,7 @@ export default function PendingModeration() {
                     <option value="APPROVED">Aprobados</option>
                     <option value="REJECTED">Rechazados</option>
                 </select>
-                {/* Flechita custom para el select */}
+                {/* Flechita custom para el select si quieres que se vea mejor (opcional) */}
                 <div className="absolute right-3 top-3 pointer-events-none">
                     <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>

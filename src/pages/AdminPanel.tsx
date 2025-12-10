@@ -90,7 +90,7 @@ export default function AdminPanel() {
              )}
              
              {view === "testimonials" && (
-                 <p className="text-gray-400 italic">Gestión de testimonios aquí...</p>
+                 <PendingModeration/>
              )}
 
              {(view === "users" || view === "config") && (
