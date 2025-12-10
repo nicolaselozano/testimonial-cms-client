@@ -6,6 +6,7 @@ import DashboardIcon from "../icons/DashboardIcon";
 import CategoriesIcon from "../icons/CategoriesIcon";
 import TestimonialsIcon from "../icons/TestimonialsIcon";
 import ConfigIcon from "../icons/ConfigIcon";
+import { ArrowLeft } from "lucide-react";
 
 // props que aceptan los íconos
 type IconProps = { className?: string };
@@ -63,11 +64,15 @@ export default function AdminSidebar({ activeView, setActiveView }: Props) {
   return (
     <aside className="w-64 bg-[#3452E6] min-h-screen text-white flex flex-col shadow-xl pr-4 font-sans relative z-10">
       {/* Logo Area */}
-      <div className="p-6 flex flex-col items-center border-b border-blue-500/30 mb-2">
-        <div className="bg-white p-2 rounded-2xl shadow-lg mb-2">
-            <img src={logo} alt="CredEdu" className="w-40 h-20 object-contain" />
-        </div>
-        
+      <div className="p-8 flex flex-col items-center justify-center items-mb-6">
+        <img 
+            src={logo}
+            alt="CredEdu Logo" 
+            className="w-32 h-16 object-contain mb-3" 
+        />
+        <h1 className="text-2xl font-bold tracking-wide text-white">
+            CredEdu
+        </h1>
       </div>
 
       {/* Navigation Menu */}
@@ -95,7 +100,7 @@ export default function AdminSidebar({ activeView, setActiveView }: Props) {
                 }
               `}
             >
-              {/* Usamos la variable Icon que ya sabemos que no es undefined */}
+              
               <Icon className={`w-6 h-6 ${isActive ? "text-[#34D399]" : "text-white"}`} />
               
               <span className="text-sm font-medium">{item.label}</span>
@@ -105,9 +110,17 @@ export default function AdminSidebar({ activeView, setActiveView }: Props) {
       </nav>
 
       {/* Footer */}
-      <div className="p-6 pl-8">
-        <Link to="/" className="flex items-center gap-2 text-blue-200 hover:text-white text-sm">
-          <span>⬅</span> Volver al Home
+      <div className="pb-8 pl-4 mt-auto">
+        <Link 
+          to="/" 
+          className="
+            w-full flex items-center gap-3 px-4 py-3 transition-all duration-200
+            rounded-l-full text-blue-100 hover:bg-blue-500/50 hover:text-white group
+          "
+        >
+          {/* Pequeña animación en la flecha al hacer hover */}
+          <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform duration-200" />
+          <span className="text-sm font-medium">Volver al Home</span>
         </Link>
       </div>
     </aside>
