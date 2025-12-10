@@ -4,6 +4,8 @@ import TestimonialsTable from "../components/admin/TestimonialsTable";
 import CategoryManager from "../components/admin/CategoryManager";
 import TagManager from "../components/admin/TagManager";
 import AdminSidebar from "../components/layout/AdminSidebar";
+import DashboardStats from "../components/dashboard/DashboardStats";
+import DashboardWidgets from "../components/dashboard/DashboardWidgets";
 import api from "../config/axiosConfig"; 
 
 interface UserDetailDto {
@@ -74,10 +76,31 @@ export default function AdminPanel() {
           <div className="bg-white p-8 rounded-2xl shadow-sm min-h-[500px]">
              
              {view === "dashboard" && (
-                <div className="text-center py-20">
-                  <h3 className="text-xl text-gray-400">Bienvenido al Panel de CredEdu</h3>
-                  <p className="mt-2 text-gray-500">Hola <b>{user?.fullname}</b>, selecciona una opción para comenzar.</p>
-                </div>
+               <div className="animate-in fade-in duration-500">
+    
+    {/* Saludo Personalizado (Estilo del diseño) */}
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800">Hola, {user?.fullname || "Admin"}! 👋</h2>
+        <p className="text-gray-500 text-sm mt-1">
+          Bienvenido al panel de control de CredEdu. Aquí tienes un resumen de hoy.
+        </p>
+      </div>
+      <button 
+        onClick={() => setView("moderation")} // Redirige a la pestaña de moderación
+        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all"
+      >
+        Ir a Moderación
+      </button>
+    </div>
+
+    {/* Tarjetas de Estadísticas */}
+    <DashboardStats />
+
+    {/* Widgets de Tareas y Estado */}
+    <DashboardWidgets />
+    
+  </div>
              )}
 
              {view === "moderation" && <TestimonialsTable initialStatus="PENDING" />}
