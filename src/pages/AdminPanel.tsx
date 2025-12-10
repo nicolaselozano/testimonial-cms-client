@@ -7,6 +7,7 @@ import AdminSidebar from "../components/layout/AdminSidebar";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import DashboardWidgets from "../components/dashboard/DashboardWidgets";
 import UserManager from "../components/admin/UserManager";
+import ConfigPanel from "../components/admin/ConfigPanel";
 import api from "../config/axiosConfig"; 
 
 interface UserDetailDto {
@@ -121,8 +122,8 @@ export default function AdminPanel() {
              )}
 
              {view === "config" && (
-                <p className="text-gray-400 italic">Esta sección está en construcción 🚧</p>
-             )}
+                <ConfigPanel />
+              )}
 
           </div>
 
