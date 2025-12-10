@@ -1,74 +1,93 @@
 import { useEffect, useState } from "react";
 import api from "../../config/axiosConfig";
-import { CheckCircle, Clock, XCircle, Layout } from "lucide-react";
-
+import { CheckCircle, Hourglass, AlertCircle, Layout, type LucideIcon } from "lucide-react";
 
 interface Stats {
   total: number;
   approved: number;
   pending: number;
   rejected: number;
+  approvedToday?: number;
+}
+
+interface CardConfig {
+  title: string;
+  count: number | undefined;
+  icon: LucideIcon;
+  colorClass: string;   // Para el texto y el icono
+  borderClass: string;  // Para el borde
 }
 
 export default function DashboardStats() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     api.get<Stats>("/api/testimonials/stats")
       .then((res) => setStats(res.data))
-      .catch((err) => console.error("Error cargando stats", err));
+      .catch((err) => {
+        console.error(err);
+        setError(true);
+      });
   }, []);
 
-  if (!stats) return <p className="text-gray-400">Cargando estadísticas...</p>;
+  if (error) return <div className="text-red-500 text-sm">Error al cargar datos.</div>;
+  if (!stats) return <div className="text-gray-400 text-sm animate-pulse">Cargando...</div>;
 
-  // Configuración visual de las tarjetas para iterar limpio
-  const cards = [
+  const cards: CardConfig[] = [
     {
-      label: "Testimonios Publicados",
-      value: stats.approved,
+      title: "Testimonios Publicados",
+      count: stats.approved,
       icon: CheckCircle,
-      color: "text-emerald-500",
-      border: "border-emerald-400",
-      bg: "bg-white",
+      colorClass: "text-emerald-400",
+      borderClass: "border-emerald-400",
     },
     {
-      label: "Testimonios Pendientes",
-      value: stats.pending,
-      icon: Clock,
-      color: "text-amber-400",
-      border: "border-amber-300",
-      bg: "bg-white",
+      title: "Testimonios Pendientes",
+      count: stats.pending,
+      icon: Hourglass, 
+      colorClass: "text-amber-300",
+      borderClass: "border-amber-300",
     },
     {
-      label: "Testimonios Rechazados",
-      value: stats.rejected,
-      icon: XCircle,
-      color: "text-red-500",
-      border: "border-red-300",
-      bg: "bg-white",
+      title: "Testimonios Rechazados",
+      count: stats.rejected,
+      icon: AlertCircle, 
+      colorClass: "text-red-400",
+      borderClass: "border-red-400",
     },
     {
-      label: "Total en Plataforma",
-      value: stats.total,
-      icon: Layout,
-      color: "text-blue-500",
-      border: "border-blue-300",
-      bg: "bg-blue-50",
+      title: "Total en Plataforma",
+      count: stats.total,
+      icon: Layout, 
+      colorClass: "text-blue-400",
+      borderClass: "border-blue-400",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {cards.map((card, index) => (
         <div 
-          key={index} 
-          className={`p-6 rounded-2xl border-2 ${card.border} ${card.bg} shadow-sm flex flex-col justify-between h-32 relative overflow-hidden`}
+          key={index}
+          // Fondo blanco, bordes redondeados y borde de color grueso (3px)
+          className={`bg-white rounded-2xl border-[3px] ${card.borderClass} p-5 flex flex-col justify-between h-32 shadow-sm transition-transform hover:scale-105`}
         >
-          <div className="z-10">
-            <h4 className="text-sm font-semibold text-gray-600 mb-1">{card.label}</h4>
-            <span className={`text-4xl font-bold ${card.color}`}>{card.value}</span>
+          {/* Título en negro/gris oscuro arriba */}
+          <h3 className="text-sm font-bold text-gray-800 leading-tight">
+            {card.title}
+          </h3>
+
+          {/* Fila inferior con Icono y Número */}
+          <div className="flex items-center gap-3 mt-2">
+            {/* Icono */}
+            <card.icon className={`w-8 h-8 ${card.colorClass}`} strokeWidth={2} />
+            
+            {/* Número */}
+            <span className={`text-4xl font-bold ${card.colorClass}`}>
+              {card.count}
+            </span>
           </div>
-          <card.icon className={`absolute right-4 bottom-4 w-12 h-12 opacity-10 ${card.color}`} />
         </div>
       ))}
     </div>
