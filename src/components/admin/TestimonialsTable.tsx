@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../../config/axiosConfig";
 import { Eye, Check, X, Filter, Search } from "lucide-react";
+// Importamos el Modal
+import TestimonialModal, { type TestimonialDetail } from "./TestimonialModal";
 
 // Tipos
 interface CategoryOrTag {
@@ -8,7 +10,8 @@ interface CategoryOrTag {
   name: string;
 }
 
-interface Testimonial {
+// Extendemos la interfaz para que coincida con el modal y el backend
+interface Testimonial extends TestimonialDetail {
   id: string;
   title: string;
   content: string;
@@ -17,21 +20,23 @@ interface Testimonial {
   createdAt: string;
   categories: CategoryOrTag[];
   tags: CategoryOrTag[];
+  // images y videos ya vienen de TestimonialDetail
 }
 
-// Aceptamos una prop para saber con qué filtro arrancar
 interface Props {
   initialStatus?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export default function TestimonialsTable({ initialStatus = "APPROVED" }: Props) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  // Usamos la prop como valor inicial
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Cada vez que cambie la "pestaña" (initialStatus), reseteamos el filtro interno
+  // Estados para el Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
+
   useEffect(() => {
     setFilterStatus(initialStatus);
   }, [initialStatus]);
@@ -59,6 +64,12 @@ export default function TestimonialsTable({ initialStatus = "APPROVED" }: Props)
     } catch (error) {
       alert("Error al moderar.");
     }
+  };
+
+  // Función para abrir el modal
+  const openDetail = (t: Testimonial) => {
+    setSelectedTestimonial(t);
+    setIsModalOpen(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -94,14 +105,19 @@ export default function TestimonialsTable({ initialStatus = "APPROVED" }: Props)
 
   return (
     <div className="font-sans">
+      {/* Modal Component */}
+      <TestimonialModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        testimonial={selectedTestimonial} 
+      />
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h2 className="text-xl font-bold text-gray-800">
-          {/* Título dinámico según lo que estemos viendo */}
           {initialStatus === "PENDING" ? "Cola de Moderación" : "Gestión de Testimonios"}
         </h2>
         
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            {/* Search */}
             <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none"/>
                 <input 
@@ -109,7 +125,6 @@ export default function TestimonialsTable({ initialStatus = "APPROVED" }: Props)
                     className="pl-9 pr-4 py-2 border rounded-full text-sm bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none w-full shadow-sm hover:bg-gray-50 transition-colors"
                 />
             </div>
-            {/* Filter */}
             <div className="relative w-full sm:w-auto">
                 <Filter className="absolute left-3 top-2.5 w-4 h-4 text-gray-500 pointer-events-none"/>
                 <select 
@@ -168,7 +183,15 @@ export default function TestimonialsTable({ initialStatus = "APPROVED" }: Props)
                     <td className="p-4"><p className="text-gray-600 text-xs line-clamp-2 max-w-xs italic leading-relaxed">"{t.content}"</p></td>
                     <td className="p-4">
                         <div className="flex justify-center items-center gap-1">
-                            <button title="Ver detalle" className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"><Eye className="w-4 h-4" /></button>
+                            
+                            <button 
+                                onClick={() => openDetail(t)} 
+                                title="Ver detalle" 
+                                className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                            >
+                                <Eye className="w-4 h-4" />
+                            </button>
+                            
                             {t.status !== 'APPROVED' && (
                                 <button onClick={() => handleModerate(t.id, 'APPROVED')} title="Aprobar" className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all"><Check className="w-4 h-4" /></button>
                             )}
