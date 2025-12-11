@@ -38,32 +38,24 @@ export default function Testimonials() {
 
   // Cargar TODOS los testimonios
   useEffect(() => {
+  api.get("/users/me")
+    .then(res => setUserName(res.data.fullname))
+    .catch(err => console.error("❌ Error cargando usuario:", err));
+  }, []);
+
+  useEffect(() => {
     const cargarTestimonios = async () => {
       try {
-        console.log("🔄 Cargando todos los testimonios...");
-
         const response = await api.get("/api/testimonials/mine");
-        console.log("📋 Todos los testimonios:", response.data);
-
         const todos = response.data || [];
-
-        // MIS TESTIMONIOS - todos los del usuario logueado
-        const misTest = todos.filter(t => t.createdById === userId);
-        console.log("👤 Mis testimonios:", misTest);
-        setMisTestimonios(misTest);
-
-        // TESTIMONIOS PÚBLICOS - solo APPROVED
-        const publicos = todos.filter(t => t.status === 'APPROVED');
-        console.log("🌐 Testimonios públicos:", publicos);
-        setTestimoniosPublicos(publicos);
-
+        setMisTestimonios(todos.filter((t: any) => t.createdById === userId));
+        setTestimoniosPublicos(todos.filter((t: any) => t.status === 'APPROVED'));
       } catch (error) {
         console.error("❌ Error cargando testimonios:", error);
       } finally {
         setLoading(false);
       }
     };
-
     cargarTestimonios();
   }, [userId]);
 
@@ -93,7 +85,6 @@ export default function Testimonials() {
               <h2 className="text-2xl font-bold text-gray-800">Mis Testimonios</h2>
               <p className="text-gray-600">Aquí podés ver todos los testimonios que has creado</p>
             </div>
-
             {misTestimonios.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-xl shadow-sm">
                 <p className="text-gray-500 mb-4">Aún no has creado testimonios</p>
@@ -110,7 +101,6 @@ export default function Testimonials() {
                   <h3 className="text-lg font-semibold text-gray-800">Listado de Testimonios</h3>
                   <p className="text-sm text-gray-600 mt-1">{misTestimonios.length} testimonios encontrados</p>
                 </div>
-
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50">
@@ -204,9 +194,7 @@ export default function Testimonials() {
                         APROBADO
                       </span>
                     </div>
-
                     <p className="text-gray-600 mb-4">{testimonio.content}</p>
-
                     {testimonio.images?.length > 0 && (
                       <img
                         src={testimonio.images[0].url}
@@ -214,7 +202,6 @@ export default function Testimonials() {
                         className="w-full max-w-xs h-32 object-cover rounded-lg mb-4"
                       />
                     )}
-
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <span>Por {testimonio.createdByName}</span>
                       <span>{new Date(testimonio.createdAt || "").toLocaleDateString()}</span>
@@ -242,7 +229,6 @@ export default function Testimonials() {
           <h1 className="text-xl font-bold">Mi Panel</h1>
           <p className="text-indigo-200 text-sm">{userName}</p>
         </div>
-
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
             {USER_MENU.map((item) => (
@@ -262,12 +248,8 @@ export default function Testimonials() {
             ))}
           </ul>
         </nav>
-
-        {/* Footer del menú */}
         <div className="p-4 border-t border-indigo-500">
-          <p className="text-indigo-200 text-xs text-center">
-            Testimonios CMS v1.0
-          </p>
+          <p className="text-indigo-200 text-xs text-center">Testimonios CMS v1.0</p>
         </div>
       </aside>
 
@@ -285,7 +267,6 @@ export default function Testimonials() {
               {activeSection === "mi-perfil" && "Información de tu cuenta y estadísticas"}
             </p>
           </div>
-
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
               {userName.charAt(0).toUpperCase()}
@@ -324,67 +305,29 @@ function MiPerfil({
   setUserName: (name: string) => void;
 }) {
   const [fullname, setFullname] = useState("");
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  /* carga inicial del nombre */
   useEffect(() => {
-    api.get("/users/me").then((res) => {
-      setFullname(res.data.fullname);
-      setImageUrl(res.data.imageUrl || null);
-    });
+    api.get("/users/me").then((res) => setFullname(res.data.fullname));
   }, []);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const form = new FormData();
-    form.append("file", file);
-
+  /* actualiza solo el nombre */
+  const updateProfile = async (payload: { fullname?: string }) => {
     setLoading(true);
     try {
-      const res = await api.post("/upload", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      const url = res.data.url;
-      setImageUrl(url);
-      await updateProfile({ imageUrl: url });
-    } catch (err) {
-      console.error("Error subiendo imagen:", err);
-      setMessage("Error al subir la imagen");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateProfile = async (payload: { fullname?: string; imageUrl?: string }) => {
-    setLoading(true);
-    try {
-      // Armamos un "User" mínimo que el backend pueda des-serializar
-      const fakeUser = {
-        id: userId,
-        fullname: payload.fullname || fullname,
-        email: "walter.backend@gmail.com", // lo mismo que tenés en /users/me
-        imageUrl: payload.imageUrl !== undefined ? payload.imageUrl : imageUrl,
-        roles: [], // importante: vacío para evitar el back-reference
-      };
-
-      await api.put(`/users/${userId}`, fakeUser, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (payload.fullname) {
-        setFullname(payload.fullname);
-        setUserName(payload.fullname);
-      }
-      if (payload.imageUrl !== undefined) {
-        setImageUrl(payload.imageUrl);
-      }
-
+        console.log(payload)
+      await api.patch(
+        "/users/update/me",
+        { username: payload.fullname || fullname, fullname: payload.fullname || fullname },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setFullname(payload.fullname!);
+      setUserName(payload.fullname!);
       setMessage("Perfil actualizado ✅");
     } catch (err) {
-      console.error("Error actualizando perfil:", err);
+      console.error(err);
       setMessage("Error al actualizar perfil");
     } finally {
       setLoading(false);
@@ -406,21 +349,16 @@ function MiPerfil({
 
       <div className="max-w-2xl mx-auto">
         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+          {/* avatar fijo con inicial */}
           <div className="mb-6">
-            <label className="cursor-pointer">
-              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-              <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-3xl mx-auto mb-4 hover:bg-indigo-200 transition-colors">
-                {imageUrl ? (
-                  <img src={imageUrl} alt="Foto" className="w-full h-full rounded-full object-cover" />
-                ) : (
-                  fullname.charAt(0).toUpperCase()
-                )}
-              </div>
-            </label>
+            <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-3xl mx-auto mb-4">
+              {fullname.charAt(0).toUpperCase()}
+            </div>
             <h3 className="text-xl font-bold text-gray-800">{fullname}</h3>
             <p className="text-gray-600">Usuario activo</p>
           </div>
 
+          {/* único botón útil */}
           <div className="space-y-4">
             <button
               onClick={handleNameChange}
@@ -432,6 +370,7 @@ function MiPerfil({
             {message && <p className="text-sm text-green-600">{message}</p>}
           </div>
 
+          {/* estadísticas que ya tenías */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500">Estadísticas de tu cuenta</p>
             <div className="grid grid-cols-3 gap-6 mt-4 max-w-lg mx-auto">
