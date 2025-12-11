@@ -11,7 +11,7 @@ export function useTestimonials() {
     setLoading(true);
     try {
       const { data } = await api.get<TestimonialResponse[]>(
-        "/api/testimonials"
+        "/api/testimonials/public?status=APPROVED"
       );
       setResults(data);
     } catch (error) {
