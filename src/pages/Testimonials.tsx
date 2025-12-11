@@ -38,6 +38,12 @@ export default function Testimonials() {
 
   // Cargar TODOS los testimonios
   useEffect(() => {
+  api.get("/users/me")
+    .then(res => setUserName(res.data.fullname))
+    .catch(err => console.error("❌ Error cargando usuario:", err));
+  }, []);
+
+  useEffect(() => {
     const cargarTestimonios = async () => {
       try {
         const response = await api.get("/api/testimonials/mine");

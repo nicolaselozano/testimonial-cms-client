@@ -11,7 +11,6 @@ export default function TestimonialList() {
   const queryParam = params.get("query") ?? "";
   const [query, setQuery] = useState(queryParam);
 
-  // 🔥 Efecto que se ejecuta cuando cambia queryParam en la URL
   useEffect(() => {
     if (queryParam.trim()) {
       search(queryParam);
@@ -23,19 +22,16 @@ export default function TestimonialList() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Si no hay texto → quitar filtro
     if (!query.trim()) {
       navigate("/testimonials/list");
       return;
     }
 
-    // Actualiza la URL, lo que dispara el useEffect automáticamente
     navigate(`/testimonials/list?query=${encodeURIComponent(query)}`);
   };
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      {/* Barra de búsqueda */}
       <form onSubmit={handleSearch} className="flex gap-2 mb-6">
         <input
           value={query}
@@ -63,7 +59,6 @@ export default function TestimonialList() {
         <p className="text-gray-500">No se encontraron testimonios.</p>
       )}
 
-      {/* GRID de tarjetas */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((t) => (
           <div
