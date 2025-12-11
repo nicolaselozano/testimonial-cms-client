@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { TestimonialResponse } from "../home/testimonial";
 import api from "../../config/axiosConfig";
+import apiPublic from "../../config/axiosPublic";
 
 export function useTestimonials() {
   const [results, setResults] = useState<TestimonialResponse[]>([]);
@@ -10,7 +11,7 @@ export function useTestimonials() {
   const getTestimonials = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get<TestimonialResponse[]>(
+      const { data } = await apiPublic.get<TestimonialResponse[]>(
         "/api/testimonials/public?status=APPROVED"
       );
       setResults(data);
