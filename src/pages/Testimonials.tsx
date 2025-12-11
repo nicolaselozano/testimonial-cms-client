@@ -308,6 +308,7 @@ function MiPerfil({
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  localStorage.setItem("userId",userId)
   /* carga inicial del nombre */
   useEffect(() => {
     api.get("/users/me").then((res) => setFullname(res.data.fullname));
