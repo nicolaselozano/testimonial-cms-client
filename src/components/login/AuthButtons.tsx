@@ -1,24 +1,27 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-axios.defaults.withCredentials = true; // importante para enviar cookies
+axios.defaults.withCredentials = true;
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function AuthButtons() {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // Chequear si hay cookie (solo un intento básico)
   useEffect(() => {
-    axios.get("http://localhost:8080/auth/me", { withCredentials: true })
+    axios
+      .get(`${API_URL}/auth/me`, { withCredentials: true })
       .then(() => setLoggedIn(true))
       .catch(() => setLoggedIn(false));
   }, []);
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorize/google";
+    window.location.href = `${API_URL}/oauth2/authorize/google`;
   };
 
   const handleLogout = () => {
-    axios.post("http://localhost:8080/auth/logout", {}, { withCredentials: true })
+    axios
+      .post(`${API_URL}/auth/logout`, {}, { withCredentials: true })
       .then(() => setLoggedIn(false));
   };
 
