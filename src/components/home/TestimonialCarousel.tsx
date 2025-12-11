@@ -12,7 +12,7 @@ export default function TestimonialCarousel({ items }: Props) {
 
   return (
     <div className="w-full h-80 rounded-xl overflow-hidden shadow-lg relative">
-      <Carousel slideInterval={5000} pauseOnHover>
+      <Carousel slideInterval={5000} pauseOnHover className="cursor-pointer">
 
         {items.map((t) => (
           <div key={t.id} className="relative w-full h-full">

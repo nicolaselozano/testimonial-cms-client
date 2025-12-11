@@ -3,6 +3,7 @@ import { useTestimonials } from "../components/hooks/useTestimonials";
 import TestimonialCarousel from "../components/home/TestimonialCarousel";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
+import EmbedCodeBlock from "../components/home/EmbedCodeBlock";
 
 export default function Home() {
   const { results, loading, getTestimonials } = useTestimonials();
@@ -21,7 +22,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Header fijo */}
       <div className="sticky top-0 z-20 bg-white/80 backdrop-blur py-4 px-6 shadow-sm">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -39,7 +39,8 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition
+              cursor-pointer"
             >
               Buscar
             </button>
@@ -54,15 +55,17 @@ export default function Home() {
         </h2>
 
         <p className="mt-5 text-gray-600 max-w-2xl mx-auto text-lg">
-          Centralizá testimonios, organizalos por categorías 
-          y mostrálos de forma profesional en tu sitio.
+          Centralizá testimonios, organizalos por categorías y mostrálos de
+          forma profesional en tu sitio.
         </p>
       </section>
 
       {/* Icon row */}
       <section className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 py-10">
         <div className="bg-white shadow-md p-6 rounded-2xl border hover:shadow-lg transition">
-          <h4 className="text-xl font-semibold text-blue-600 mb-2">Gestión fácil</h4>
+          <h4 className="text-xl font-semibold text-blue-600 mb-2">
+            Gestión fácil
+          </h4>
           <p className="text-gray-600 text-sm">
             Subí testimonios, imágenes y etiquetas con un solo clic.
           </p>
@@ -96,6 +99,20 @@ export default function Home() {
         ) : (
           <TestimonialCarousel items={results.slice(0, 5)} />
         )}
+      </section>
+
+      {/* Sección código embed */}
+      <section className="max-w-4xl mx-auto px-6 pb-20">
+        <h3 className="text-3xl font-semibold mb-4 text-gray-800">
+          Integración embebida
+        </h3>
+
+        <p className="text-gray-600 mb-4">
+          Copiá y pegá este código en cualquier sitio web (WordPress, Webflow,
+          HTML, etc.) para mostrar testimonios aprobados.
+        </p>
+
+        <EmbedCodeBlock />
       </section>
     </div>
   );
